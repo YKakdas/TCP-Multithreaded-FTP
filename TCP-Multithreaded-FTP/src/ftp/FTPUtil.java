@@ -184,7 +184,6 @@ public class FTPUtil {
                 // At this moment, the longest command should be in two word length, longer than this, should be ignored
                 if (split.length > 2) {
                     System.out.println("Unknown command... Please try again!");
-                    continue;
                 } else {
                     // If a command is only a single word, it must be one of the "exit", "ls", or "cwd" commands
                     if (split.length == 1) {
@@ -202,7 +201,6 @@ public class FTPUtil {
                             waitServerResponse(input);
                         } else {
                             System.out.println("Unknown command... Please try again!");
-                            continue;
                         }
                     } else {
                         // If the command is two-words, it should either be a "get" or "cd" command
@@ -213,7 +211,6 @@ public class FTPUtil {
                             clientRequestCdCommand(output, split[1]);
                         } else {
                             System.out.println("Unknown command... Please try again!");
-                            continue;
                         }
                     }
                 }
