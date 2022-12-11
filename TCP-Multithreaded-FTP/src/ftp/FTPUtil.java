@@ -38,9 +38,13 @@ public class FTPUtil {
                 // a file with given name.
             } else if (serverResponse.getCommandType() == CommandType.GET) {
                 FTPFileData data = (FTPFileData) serverResponse.getResponse();
-                FileOutputStream fos = new FileOutputStream(data.getFileName());
-                fos.write(data.getFileContent());
-                System.out.println("The file named " + data.getFileName() + " has been successfully saved into you local directory");
+                if (data.getFileContent() == null) {
+                    System.out.println("Server was not able find the file named " + data.getFileName());
+                } else {
+                    FileOutputStream fos = new FileOutputStream(data.getFileName());
+                    fos.write(data.getFileContent());
+                    System.out.println("The file named " + data.getFileName() + " has been successfully saved into you local directory");
+                }
             }
             // There is no other response type, something must have gone wrong if an error was thrown
         } catch (Exception e) {
@@ -124,10 +128,16 @@ public class FTPUtil {
     // Server sends a file from its cwd to client
     public static void serverRespondGetFile(ObjectOutputStream output, File file, String fileName) {
         try {
-            byte[] bytes = new byte[(int) file.length()];
-            FileInputStream fis = new FileInputStream(file);
-            int count = fis.read(bytes);
-            FTPServerResponse response = new FTPServerResponse(CommandType.GET, new FTPFileData(fileName, bytes));
+            FTPServerResponse response;
+            if (file != null) {
+                byte[] bytes = new byte[(int) file.length()];
+                FileInputStream fis = new FileInputStream(file);
+                int count = fis.read(bytes);
+                response = new FTPServerResponse(CommandType.GET, new FTPFileData(fileName, bytes));
+            } else {
+                response = new FTPServerResponse(CommandType.GET, new FTPFileData(fileName, null));
+            }
+
             output.writeObject(response);
             output.flush();
             System.out.println("A file with name " + fileName + " has been sent to a client");

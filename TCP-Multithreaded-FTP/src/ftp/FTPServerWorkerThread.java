@@ -3,7 +3,6 @@ package ftp;
 import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -58,6 +57,9 @@ public class FTPServerWorkerThread extends Thread {
                         File file = new File(filePath);
                         if (Files.exists(file.toPath())) {
                             FTPUtil.serverRespondGetFile(output, file, request.getCommandParameter());
+                        } else {
+                            System.out.println("Couldn't respond client's get request. No such a file exists.");
+                            FTPUtil.serverRespondGetFile(output, null, request.getCommandParameter());
                         }
                     }
                     // Client wants to terminate the connection. Close all streams.
